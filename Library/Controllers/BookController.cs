@@ -8,9 +8,9 @@ namespace Library.Controllers
     {
         private static IList<Book> books = new List<Book>
         {
-            new Book() {Id = 1, Title = "Twilight", Description = "Garbage", Author = "Stephany Mayer"},
-            new Book() {Id = 2, Title = "Lord of the rings", Description = "Book about rings", Author = "Tolkien"},
-            new Book() {Id = 3, Title = "1984", Description = "Big brother is watching", Author = "George Orwell"}
+            new Book() {Id = 1, Title = "Twilight", Author = "Stephany Mayer", Description = "Teenage romance"},
+            new Book() {Id = 2, Title = "Lord of the rings", Author = "Tolkien", Description = "Book about rings"},
+            new Book() {Id = 3, Title = "1984", Author = "George Orwell", Description = "Big brother is watching"}
         };
 
         // GET: BookController
@@ -28,7 +28,7 @@ namespace Library.Controllers
         // GET: BookController/Create
         public ActionResult Create()
         {
-            return View();
+            return View(new Book());
         }
 
         // POST: BookController/Create
@@ -50,37 +50,33 @@ namespace Library.Controllers
         // POST: BookController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, Book book)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            Book b = books.FirstOrDefault(x => x.Id == id);
+            b.Author = book.Author;
+            b.Description = book.Description;
+            b.Title = book.Title;
+
+            return RedirectToAction(nameof(Index));
+         
         }
 
         // GET: BookController/Delete/5
         public ActionResult Delete(int id)
         {
+
             return View();
         }
 
         // POST: BookController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, Book book)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            Book b = books.FirstOrDefault(x => x.Id == id);
+            books.Remove(b);
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }
