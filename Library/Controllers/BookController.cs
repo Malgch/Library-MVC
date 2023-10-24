@@ -10,7 +10,7 @@ namespace Library.Controllers
         {
             new Book() {Id = 1, Title = "Twilight", Author = "Stephany Mayer", Description = "Teenage romance"},
             new Book() {Id = 2, Title = "Lord of the rings", Author = "Tolkien", Description = "Book about rings"},
-            new Book() {Id = 3, Title = "1984", Author = "George Orwell", Description = "Big brother is watching"}
+            new Book() {Id = 3, Title = "1984", Author = "George Orwell", Description = "Someone is watching"}
         };
 
         // GET: BookController
@@ -44,7 +44,8 @@ namespace Library.Controllers
         // GET: BookController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            Book bookToEdit = books.FirstOrDefault(x => x.Id == id);
+            return View(bookToEdit);
         }
 
         // POST: BookController/Edit/5
@@ -64,8 +65,8 @@ namespace Library.Controllers
         // GET: BookController/Delete/5
         public ActionResult Delete(int id)
         {
-
-            return View();
+            Book bookToDelete = books.FirstOrDefault(x => x.Id == id);
+            return View(bookToDelete);
         }
 
         // POST: BookController/Delete/5
@@ -73,8 +74,8 @@ namespace Library.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, Book book)
         {
-            Book b = books.FirstOrDefault(x => x.Id == id);
-            books.Remove(b);
+            Book bookToDelete = books.FirstOrDefault(x => x.Id == id);
+            books.Remove(bookToDelete);
 
             return RedirectToAction(nameof(Index));
         }
