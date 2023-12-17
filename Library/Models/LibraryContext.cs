@@ -20,5 +20,7 @@ namespace Library.Models
         public DbSet<LibraryAdmin> LibraryAdmins { get; set; }
         public DbSet<LibraryUser> LibraryUsers { get; set; }
         public DbSet<Waitlist> Waitlists { get; set; }
+
+
     }
 }

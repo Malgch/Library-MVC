@@ -17,7 +17,7 @@ namespace Library.Models
         public bool IsAvailable { get; set; }
 
         public Category Category { get; set; }
-        public int Id_Category { get; set; }
+        public int CategoryId { get; set; }
         
         
     }

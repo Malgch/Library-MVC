@@ -11,7 +11,7 @@ namespace Library.Models
         public bool IsReturned { get; set; }
 
         public LibraryUser User { get; set; }
-        public int IdUser { get; set; }
+        public int UserId { get; set; }
         public Book Book { get; set; }
         public int BookId { get; set; }
     }
