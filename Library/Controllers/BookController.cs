@@ -1,11 +1,20 @@
 ﻿using Library.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Library.Controllers
 {
     public class BookController : Controller
     {
+
+        private readonly LibraryContext _context;
+
+        public BookController(LibraryContext context)
+        {
+            _context = context;
+        }
+
         private static IList<Book> books = new List<Book>
         {
             new Book() {Id = 1, Title = "Twilight", Author = "Stephany Mayer", Description = "Teenage romance"},
@@ -16,13 +25,17 @@ namespace Library.Controllers
         // GET: BookController
         public ActionResult Index()
         {
-            return View(books);
+            var booksAndCategory = _context.Books.Include(b => b.Category).ToList();
+            return View(booksAndCategory);
         }
 
         // GET: BookController/Details/5
         public ActionResult Details(int id)
         {
-            return View(books.FirstOrDefault(x => x.Id == id));
+            var booksAndCategory = _context.Books.Include(b => b.Category).FirstOrDefault(b => b.Id == id);
+            return View(booksAndCategory);
+            //return View(_context.Books.Find(id));
+
         }
 
         // GET: BookController/Create
