@@ -1,13 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Library.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
-namespace Library.Models
+namespace Library.Data
 {
-    public class LibraryContext : DbContext
+    public class LibraryContext : IdentityDbContext<LibraryUser>
     {
-        public LibraryContext(DbContextOptions<LibraryContext>options) : base(options)
+        public LibraryContext(DbContextOptions<LibraryContext> options) : base(options)
         {
-            
+
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
