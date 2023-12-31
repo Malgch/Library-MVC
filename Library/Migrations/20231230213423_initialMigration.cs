@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Library.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class initialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -20,22 +20,6 @@ namespace Library.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Categories", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "LibraryAdmins",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Surname = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LibraryAdmins", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -87,7 +71,7 @@ namespace Library.Migrations
                     StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsReturned = table.Column<bool>(type: "bit", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    LibraryUserId = table.Column<int>(type: "int", nullable: false),
                     BookId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -100,8 +84,8 @@ namespace Library.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_BooksBorrowed_LibraryUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_BooksBorrowed_LibraryUsers_LibraryUserId",
+                        column: x => x.LibraryUserId,
                         principalTable: "LibraryUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -113,7 +97,7 @@ namespace Library.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    LibraryUserId = table.Column<int>(type: "int", nullable: false),
                     BookId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -126,8 +110,8 @@ namespace Library.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Waitlists_LibraryUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Waitlists_LibraryUsers_LibraryUserId",
+                        column: x => x.LibraryUserId,
                         principalTable: "LibraryUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -144,9 +128,9 @@ namespace Library.Migrations
                 column: "BookId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BooksBorrowed_UserId",
+                name: "IX_BooksBorrowed_LibraryUserId",
                 table: "BooksBorrowed",
-                column: "UserId");
+                column: "LibraryUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Waitlists_BookId",
@@ -154,18 +138,15 @@ namespace Library.Migrations
                 column: "BookId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Waitlists_UserId",
+                name: "IX_Waitlists_LibraryUserId",
                 table: "Waitlists",
-                column: "UserId");
+                column: "LibraryUserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
                 name: "BooksBorrowed");
-
-            migrationBuilder.DropTable(
-                name: "LibraryAdmins");
 
             migrationBuilder.DropTable(
                 name: "Waitlists");

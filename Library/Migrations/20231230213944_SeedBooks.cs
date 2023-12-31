@@ -4,7 +4,7 @@
 
 namespace Library.Migrations
 {
-    public partial class DbSeederBooks : Migration
+    public partial class SeedBooks : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

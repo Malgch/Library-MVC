@@ -12,14 +12,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Library.Migrations
 {
     [DbContext(typeof(LibraryContext))]
-    [Migration("20231217234057_DbSeederWaitlists")]
-    partial class DbSeederWaitlists
+    [Migration("20231230213423_initialMigration")]
+    partial class initialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("ProductVersion", "6.0.23")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -77,17 +77,17 @@ namespace Library.Migrations
                     b.Property<bool>("IsReturned")
                         .HasColumnType("bit");
 
+                    b.Property<int>("LibraryUserId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("BookId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("LibraryUserId");
 
                     b.ToTable("BooksBorrowed");
                 });
@@ -108,39 +108,6 @@ namespace Library.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("Library.Models.LibraryAdmin", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Surname")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("LibraryAdmins");
                 });
 
             modelBuilder.Entity("Library.Models.LibraryUser", b =>
@@ -190,14 +157,14 @@ namespace Library.Migrations
                     b.Property<int>("BookId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("LibraryUserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("BookId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("LibraryUserId");
 
                     b.ToTable("Waitlists");
                 });
@@ -216,39 +183,46 @@ namespace Library.Migrations
             modelBuilder.Entity("Library.Models.BookBorrowed", b =>
                 {
                     b.HasOne("Library.Models.Book", "Book")
-                        .WithMany()
+                        .WithMany("BooksBorrowed")
                         .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Library.Models.LibraryUser", "User")
+                    b.HasOne("Library.Models.LibraryUser", "LibraryUser")
                         .WithMany("BooksBorrowed")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("LibraryUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Book");
 
-                    b.Navigation("User");
+                    b.Navigation("LibraryUser");
                 });
 
             modelBuilder.Entity("Library.Models.Waitlist", b =>
                 {
                     b.HasOne("Library.Models.Book", "Book")
-                        .WithMany()
+                        .WithMany("Waitlist")
                         .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Library.Models.LibraryUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
+                    b.HasOne("Library.Models.LibraryUser", "LibraryUser")
+                        .WithMany("Waitlists")
+                        .HasForeignKey("LibraryUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Book");
 
-                    b.Navigation("User");
+                    b.Navigation("LibraryUser");
+                });
+
+            modelBuilder.Entity("Library.Models.Book", b =>
+                {
+                    b.Navigation("BooksBorrowed");
+
+                    b.Navigation("Waitlist");
                 });
 
             modelBuilder.Entity("Library.Models.Category", b =>
@@ -259,6 +233,8 @@ namespace Library.Migrations
             modelBuilder.Entity("Library.Models.LibraryUser", b =>
                 {
                     b.Navigation("BooksBorrowed");
+
+                    b.Navigation("Waitlists");
                 });
 #pragma warning restore 612, 618
         }

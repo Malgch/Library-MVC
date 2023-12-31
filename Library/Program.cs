@@ -2,6 +2,8 @@ using Library.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Library.Data;
+using System;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,13 +12,24 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<LibraryContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DevConnection")));
 
-builder.Services.AddDefaultIdentity<LibraryUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<LibraryContext>();
+//builder.Services.AddDefaultIdentity<IdentityUser<int>>(options => options.SignIn.RequireConfirmedAccount = true)
+//    .AddEntityFrameworkStores<LibraryContext>();
 
-//builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
-//    .AddEntityFrameworkStores<LibraryContext>()
-//    .AddRoles<IdentityRole>()
-//    .AddDefaultTokenProviders();
+
+//builder.Services.AddIdentity<LibraryUser>(options =>
+//{
+//    options.SignIn.RequireConfirmedAccount = false;
+//})
+//.AddEntityFrameworkStores<LibraryContext>()
+//.AddRoles<IdentityRole>()
+//.AddDefaultTokenProviders();
+
+
+//builder.Services.AddIdentity<LibraryUser, ApplicationRole>()
+//            .AddEntityFrameworkStores<LibraryContext>()
+//            .AddDefaultUI()
+//            .AddDefaultTokenProviders();
+
 
 var app = builder.Build();
 
@@ -32,7 +45,6 @@ app.MapRazorPages();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 //app.UseSession();
 app.UseAuthentication();;

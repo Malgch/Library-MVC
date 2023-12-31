@@ -4,15 +4,17 @@
 
 namespace Library.Migrations
 {
-    public partial class DbSeederUsersAdmins : Migration
+    public partial class SeedUsersAndCategories : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql("INSERT INTO LibraryUsers (FirstName, Surname, Email, Password, IsBlocked) VALUES ('Caroline', 'Everton', 'carever@user.com', '12345678', 'False')");
             migrationBuilder.Sql("INSERT INTO LibraryUsers (FirstName, Surname, Email, Password, IsBlocked) VALUES ('Wanda', 'Daniels', 'wadan@user.com', '12345678', 'True')");
+            migrationBuilder.Sql("INSERT INTO LibraryUsers (FirstName, Surname, Email, Password, IsBlocked) VALUES ('Jon', 'Doe', 'user@library.com', '12345678', 'False')");
+            migrationBuilder.Sql("INSERT INTO LibraryUsers (FirstName, Surname, Email, Password, IsBlocked) VALUES ('Brandi', 'Kirby', 'bkirby@user.com', '12345678', 'False')");
 
-            migrationBuilder.Sql("INSERT INTO LibraryAdmins (FirstName, Surname, Email, Password) VALUES ('Ralph', 'Watts', 'rwatts@library.com', '12345678')");
-            migrationBuilder.Sql("INSERT INTO LibraryAdmins ( FirstName, Surname, Email, Password) VALUES ('Elaine', 'Shaw', 'elshaw@library.com', '12345678')");
+            migrationBuilder.Sql("INSERT INTO LibraryUsers (FirstName, Surname, Email, Password, IsBlocked) VALUES ('Ralph', 'Watts', 'admin@library.com', '12345678', 'False')");
+
 
             migrationBuilder.Sql("INSERT INTO Categories (Name) VALUES ('Mystery')");
             migrationBuilder.Sql("INSERT INTO Categories (Name) VALUES ('Thriller')");

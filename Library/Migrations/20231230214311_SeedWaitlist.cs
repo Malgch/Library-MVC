@@ -4,12 +4,12 @@
 
 namespace Library.Migrations
 {
-    public partial class DbSeederWaitlists : Migration
+    public partial class SeedWaitlist : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql("INSERT INTO Waitlists (UserId, BookId) VALUES ('1','6')");
-            migrationBuilder.Sql("INSERT INTO Waitlists (UserId, BookId) VALUES ('2','5')");
+            migrationBuilder.Sql("INSERT INTO Waitlists (LibraryUserId, BookId) VALUES ('5','6')");
+            migrationBuilder.Sql("INSERT INTO Waitlists (LibraryUserId, BookId) VALUES ('6','5')");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

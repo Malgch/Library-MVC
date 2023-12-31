@@ -3,11 +3,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Library.Models
 {
-    public class LibraryUser : IdentityUser
+    public class LibraryUser : IdentityUser<int>
     {
         [Key]
-        public int Id { get; set; }     
-        
+        public int Id { get; set; }
+
         [Required]
         [StringLength(100)]
         public string FirstName { get; set; }
@@ -25,9 +25,9 @@ namespace Library.Models
         [MinLength(8), MaxLength(20)]
         public string Password { get; set; }
 
-        [Required]
         public bool IsBlocked { get; set; }
 
         public ICollection<BookBorrowed> BooksBorrowed { get; set; }
+        public ICollection<Waitlist> Waitlists { get; set; }
     }
 }
