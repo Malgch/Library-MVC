@@ -12,8 +12,8 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<LibraryContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DevConnection")));
 
-//builder.Services.AddDefaultIdentity<IdentityUser<int>>(options => options.SignIn.RequireConfirmedAccount = true)
-//    .AddEntityFrameworkStores<LibraryContext>();
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<LibraryContext>();
 
 
 //builder.Services.AddIdentity<LibraryUser>(options =>
@@ -46,7 +46,7 @@ app.MapRazorPages();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-//app.UseSession();
+
 app.UseAuthentication();;
 
 app.UseAuthorization();

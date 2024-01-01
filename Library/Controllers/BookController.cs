@@ -2,6 +2,7 @@
 using Library.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace Library.Controllers
@@ -16,12 +17,7 @@ namespace Library.Controllers
             _context = context;
         }
 
-        private static IList<Book> books = new List<Book>
-        {
-            new Book() {Id = 1, Title = "Twilight", Author = "Stephany Mayer", Description = "Teenage romance"},
-            new Book() {Id = 2, Title = "Lord of the rings", Author = "Tolkien", Description = "Book about rings"},
-            new Book() {Id = 3, Title = "1984", Author = "George Orwell", Description = "Someone is watching"}
-        };
+
 
         // GET: BookController
         public ActionResult Index()
@@ -42,24 +38,30 @@ namespace Library.Controllers
         // GET: BookController/Create
         public ActionResult Create()
         {
-            return View(new Book());
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+            return View();
+
         }
+
 
         // POST: BookController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(Book book)
         {
-            book.Id = books.Count + 1;
-            books.Add(book);
-            return RedirectToAction("Index");
+            book.IsAvailable = true;
+            _context.Books.Add(book);
+            _context.SaveChanges();                
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", book.CategoryId);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: BookController/Edit/5
         public ActionResult Edit(int id)
         {
-            Book bookToEdit = books.FirstOrDefault(x => x.Id == id);
-            return View(bookToEdit);
+            var data = _context.Books.Where(x => x.Id == id).FirstOrDefault();
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", data.CategoryId);
+            return View(data);
         }
 
         // POST: BookController/Edit/5
@@ -67,20 +69,28 @@ namespace Library.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, Book book)
         {
-            Book b = books.FirstOrDefault(x => x.Id == id);
-            b.Author = book.Author;
-            b.Description = book.Description;
-            b.Title = book.Title;
+            var data = _context.Books.Where(x => x.Id == book.Id).FirstOrDefault();
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", data.CategoryId);
 
-            return RedirectToAction(nameof(Index));
-         
+            if (data != null)
+            {
+                ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", book.CategoryId);
+                data.Title = book.Title;
+                data.Author = book.Author;
+                data.Category = book.Category;
+                data.Description = book.Description;
+                data.IsAvailable = book.IsAvailable;               
+                _context.SaveChanges();
+            }
+            return RedirectToAction("Index");
+
         }
 
         // GET: BookController/Delete/5
         public ActionResult Delete(int id)
         {
-            Book bookToDelete = books.FirstOrDefault(x => x.Id == id);
-            return View(bookToDelete);
+            Book bookToDelete = _context.Books.FirstOrDefault(x => x.Id == id);
+            return View();
         }
 
         // POST: BookController/Delete/5
@@ -88,9 +98,9 @@ namespace Library.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, Book book)
         {
-            Book bookToDelete = books.FirstOrDefault(x => x.Id == id);
-            books.Remove(bookToDelete);
-
+            Book bookToDelete = _context.Books.Where(x => x.Id == id).FirstOrDefault();
+            _context.Books.Remove(bookToDelete);
+            _context.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
     }

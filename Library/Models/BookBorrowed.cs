@@ -10,7 +10,7 @@ namespace Library.Models
         public DateTime EndTime { get; set; }
         public bool IsReturned { get; set; }
 
-        public int LibraryUserId { get; set; }
+        public string LibraryUserId { get; set; }
         public LibraryUser LibraryUser { get; set; }
 
         public int BookId { get; set; }

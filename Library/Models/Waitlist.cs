@@ -7,7 +7,7 @@ namespace Library.Models
         public int Id { get; set; }
        
 
-        public int LibraryUserId { get; set; }
+        public string LibraryUserId { get; set; }
         public LibraryUser LibraryUser { get; set; }
 
         public int BookId { get; set; }

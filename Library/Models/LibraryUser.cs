@@ -3,17 +3,17 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Library.Models
 {
-    public class LibraryUser : IdentityUser<int>
+    public class LibraryUser : IdentityUser
     {
         [Key]
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         [Required]
-        [StringLength(100)]
+        [StringLength(255)]
         public string FirstName { get; set; }
 
         [Required]
-        [StringLength(100)]
+        [StringLength(255)]
         public string Surname { get; set; }
 
         [Required]
@@ -21,11 +21,8 @@ namespace Library.Models
         [RegularExpression(".+\\@.+\\.[a-z]{2,3}", ErrorMessage = "Please add a valid email address!")]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "Please set your password, it needs to be 8-20 digits/letters long")]
-        [MinLength(8), MaxLength(20)]
-        public string Password { get; set; }
-
         public bool IsBlocked { get; set; }
+
 
         public ICollection<BookBorrowed> BooksBorrowed { get; set; }
         public ICollection<Waitlist> Waitlists { get; set; }

@@ -3,21 +3,22 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Options;
 using System.Reflection.Emit;
 
 namespace Library.Data
 {
-    public class YourDbContextFactory : IDesignTimeDbContextFactory<LibraryContext>
-    {
-        public LibraryContext CreateDbContext(string[] args)
-        {
-            var optionsBuilder = new DbContextOptionsBuilder<LibraryContext>();
-            optionsBuilder.UseSqlServer("Server=DESKTOP-7CRVRRO;Database=LibraryDb;Trusted_Connection=True;TrustServerCertificate=True;");
+    //public class YourDbContextFactory : IDesignTimeDbContextFactory<LibraryContext>
+    //{
+    //    public LibraryContext CreateDbContext(string[] args)
+    //    {
+    //        var optionsBuilder = new DbContextOptionsBuilder<LibraryContext>();
+    //        optionsBuilder.UseSqlServer("Server=DESKTOP-7CRVRRO;Database=LibraryDb;Trusted_Connection=True;TrustServerCertificate=True;");
 
-            return new LibraryContext(optionsBuilder.Options);
-        }
-    }
+    //        return new LibraryContext(optionsBuilder.Options);
+    //    }
+    //}
     public class LibraryContext : IdentityDbContext
     {
         public LibraryContext(DbContextOptions<LibraryContext> options) : base(options)
@@ -28,6 +29,16 @@ namespace Library.Data
         {
             optionsBuilder.UseSqlServer("Server=DESKTOP-7CRVRRO;Database=LibraryDb;Trusted_Connection=True;TrustServerCertificate=True;");
         }
+
+        private class ApplicationUserEntityConfiguration : IEntityTypeConfiguration<LibraryUser>
+        {
+            public void Configure(EntityTypeBuilder<LibraryUser> builder)
+            {
+                builder.Property(x => x.FirstName).HasMaxLength(255);
+                builder.Property(x => x.Surname).HasMaxLength(255);
+            }
+        }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -65,8 +76,8 @@ namespace Library.Data
         public DbSet<Book> Books { get; set; }
         public DbSet<BookBorrowed> BooksBorrowed { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<LibraryUser> LibraryUsers { get; set; }
         public DbSet<Waitlist> Waitlists { get; set; }
+        public DbSet<LibraryUser> LibraryUsers { get; set; }
 
 
     }
