@@ -74,10 +74,9 @@ namespace Library.Controllers
 
             if (data != null)
             {
-                ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", book.CategoryId);
                 data.Title = book.Title;
                 data.Author = book.Author;
-                data.Category = book.Category;
+                data.CategoryId = book.CategoryId;
                 data.Description = book.Description;
                 data.IsAvailable = book.IsAvailable;               
                 _context.SaveChanges();

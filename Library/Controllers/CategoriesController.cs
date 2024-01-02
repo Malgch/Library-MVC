@@ -79,9 +79,33 @@ namespace Library.Controllers
         public ActionResult Delete(int id, Category category)
         {
             Category categoryToDelete = _context.Categories.Where(x => x.Id == id).FirstOrDefault();
-            _context.Categories.Remove(categoryToDelete);
+            var booksWithCategory = _context.Books.Where(b => b.CategoryId == id).ToList();
+
+            if ( categoryToDelete.Name == "default") 
+                return RedirectToAction(nameof(Index));
+
+
+            if (booksWithCategory.Count > 0 )
+            {
+
+                var defaultCategory = _context.Categories.FirstOrDefault(c => c.Name.Equals("default"));                
+
+                if (defaultCategory == null)
+                {
+                    categoryToDelete = new Category { Name = "default" };
+                    _context.Categories.Add(categoryToDelete);
+                }
+
+                foreach (var book in booksWithCategory) 
+                {
+                    book.Category = defaultCategory;
+                    _context.Update(book);
+                }               
+
+            }
+                _context.Categories.Remove(categoryToDelete);
+         
             _context.SaveChanges();
-            ViewBag.Message = "Record deleted succesfully.";
             return RedirectToAction(nameof(Index));
         }
     }
