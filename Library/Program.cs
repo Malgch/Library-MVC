@@ -13,22 +13,12 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<LibraryContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DevConnection")));
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddDefaultTokenProviders()
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<LibraryContext>();
 
 
-//builder.Services.AddIdentity<LibraryUser>(options =>
-//{
-//    options.SignIn.RequireConfirmedAccount = false;
-//})
-//.AddEntityFrameworkStores<LibraryContext>()
-//.AddRoles<IdentityRole>()
-//.AddDefaultTokenProviders();
 
-
-//builder.Services.AddIdentity<LibraryUser, ApplicationRole>()
-//            .AddEntityFrameworkStores<LibraryContext>()
-//            .AddDefaultUI()
-//            .AddDefaultTokenProviders();
 
 
 var app = builder.Build();

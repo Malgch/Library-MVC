@@ -1,12 +1,16 @@
 ﻿using Library.Data;
 using Library.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace Library.Controllers
 {
+    
     public class BookController : Controller
     {
 
@@ -35,6 +39,7 @@ namespace Library.Controllers
 
         }
 
+        [Authorize(Roles = "Admin")]
         // GET: BookController/Create
         public ActionResult Create()
         {
@@ -43,10 +48,11 @@ namespace Library.Controllers
 
         }
 
-
+        
         // POST: BookController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Create(Book book)
         {
             book.IsAvailable = true;
@@ -56,6 +62,7 @@ namespace Library.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Admin")]
         // GET: BookController/Edit/5
         public ActionResult Edit(int id)
         {
@@ -64,9 +71,11 @@ namespace Library.Controllers
             return View(data);
         }
 
+
         // POST: BookController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int id, Book book)
         {
             var data = _context.Books.Where(x => x.Id == book.Id).FirstOrDefault();
@@ -86,6 +95,7 @@ namespace Library.Controllers
         }
 
         // GET: BookController/Delete/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
             Book bookToDelete = _context.Books.FirstOrDefault(x => x.Id == id);
@@ -95,12 +105,64 @@ namespace Library.Controllers
         // POST: BookController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int id, Book book)
         {
             Book bookToDelete = _context.Books.Where(x => x.Id == id).FirstOrDefault();
             _context.Books.Remove(bookToDelete);
             _context.SaveChanges();
             return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize(Roles = "Admin,User")]
+        public ActionResult Borrow(int id)
+        {
+            var book = _context.Books.Find(id);
+
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            return View(book);
+        }
+
+        // POST: Book/Borrow/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,User")]
+        public ActionResult Borrow(int id, Book bookinput)
+        {
+            var book = _context.Books.Where(x => x.Id == bookinput.Id).FirstOrDefault();
+
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            if (book.IsAvailable)
+            {
+                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                book.IsAvailable = false;
+
+
+                var borrowedBook = new BookBorrowed
+                {
+                    StartTime = DateTime.Now,
+                    EndTime = DateTime.Now.AddDays(30), 
+                    IsReturned = false, 
+                    LibraryUserId = userId,
+                    BookId = book.Id
+                };
+
+                _context.BooksBorrowed.Add(borrowedBook);
+                _context.SaveChanges();
+
+                return RedirectToAction("Index"); 
+            }
+
+            TempData["Message"] = "The book is not available for borrowing.";
+            return RedirectToAction("Index");
         }
     }
 }
