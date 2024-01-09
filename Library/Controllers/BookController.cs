@@ -114,55 +114,42 @@ namespace Library.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [Authorize(Roles = "Admin,User")]
-        public ActionResult Borrow(int id)
-        {
-            var book = _context.Books.Find(id);
+        //[Authorize(Roles = "Admin,User")]
+        //public ActionResult Borrow(int bookId)
+        //{
+        //    var bookToBorrow = _context.Books.FirstOrDefault(b => b.Id == bookId);
 
-            if (book == null)
-            {
-                return NotFound();
-            }
+        //    var model = new Tuple<Book, BookBorrowed>(bookToBorrow, new BookBorrowed { BookId = bookToBorrow.Id });
+        //    return View(model);
+        //}
 
-            return View(book);
-        }
+        //// POST: Book/Borrow/5
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Admin,User")]
+        //public ActionResult Borrow(BookBorrowed bookBorrowed)
+        //{
+        //    var book = _context.Books.Find(bookBorrowed.BookId);
 
-        // POST: Book/Borrow/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin,User")]
-        public ActionResult Borrow(int id, Book bookinput)
-        {
-            var book = _context.Books.Where(x => x.Id == bookinput.Id).FirstOrDefault();
+        //    var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (book == null)
-            {
-                return NotFound();
-            }
+        //    if (book.IsAvailable)
+        //    {
+        //        book.IsAvailable = false;
+        //        _context.Books.Update(book);
 
-            if (book.IsAvailable)
-            {
-                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                book.IsAvailable = false;
+        //        bookBorrowed.StartTime = DateTime.Now;
+        //        bookBorrowed.EndTime = DateTime.Now.AddDays(30);
+        //        bookBorrowed.LibraryUserId = userId;
+        //        bookBorrowed.IsReturned = false;
 
+        //        _context.BooksBorrowed.Add(bookBorrowed);
+        //        _context.SaveChanges();
 
-                var borrowedBook = new BookBorrowed
-                {
-                    StartTime = DateTime.Now,
-                    EndTime = DateTime.Now.AddDays(30), 
-                    IsReturned = false, 
-                    LibraryUserId = userId,
-                    BookId = book.Id
-                };
-
-                _context.BooksBorrowed.Add(borrowedBook);
-                _context.SaveChanges();
-
-                return RedirectToAction("Index"); 
-            }
-
-            TempData["Message"] = "The book is not available for borrowing.";
-            return RedirectToAction("Index");
-        }
+        //        return RedirectToAction("Index"); 
+        //    }
+        //    TempData["Message"] = "The book is not available for borrowing.";
+        //    return RedirectToAction("Index");
+        //}
     }
 }

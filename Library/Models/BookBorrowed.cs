@@ -14,7 +14,6 @@ namespace Library.Models
         public LibraryUser LibraryUser { get; set; }
 
         public int BookId { get; set; }
-        public Book Book { get; set; }
-        
+        public Book Book { get; set; }        
     }
 }
