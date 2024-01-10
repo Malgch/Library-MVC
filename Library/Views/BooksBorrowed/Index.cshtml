@@ -52,7 +52,7 @@
                 @Html.DisplayFor(modelItem => item.Book.Title)
             </td>
             <td>
-                    @Html.ActionLink("Edit", "Edit", new { libraryUserId = item.LibraryUserId, bookId = item.BookId }, null) |
+                    @Html.ActionLink("Prolong", "Prolong", new { libraryUserId = item.LibraryUserId, bookId = item.BookId }, null) |
                 @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
                 @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
             </td>

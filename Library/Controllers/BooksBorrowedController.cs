@@ -45,12 +45,11 @@ namespace Library.Controllers
         }
 
         // GET: BooksBorrowedController/Create
-        public ActionResult Create(int? selectedBookId)
+        public ActionResult Create()
         {
             var availableBooks = _context.Books.Where(b => b.IsAvailable).ToList();
             ViewData["BookId"] = new SelectList(availableBooks, "Id", "Author");
             return View();
-
         }
 
         // POST: BooksBorrowedController/Create
@@ -58,13 +57,10 @@ namespace Library.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(int bookId)
         {
-            // Retrieve book information based on bookId
             var bookToBorrow = _context.Books.Find(bookId);
 
-            // Check if the book is available for borrowing
             if (bookToBorrow != null && bookToBorrow.IsAvailable)
             {
-                // Create a new BookBorrowed instance
                 var bookBorrowed = new BookBorrowed
                 {
                     StartTime = DateTime.Now.Date,
@@ -78,51 +74,48 @@ namespace Library.Controllers
                 _context.Books.Update(bookToBorrow);
                 _context.BooksBorrowed.Add(bookBorrowed);
                 _context.SaveChanges();
-
-                TempData["Message"] = "Book borrowed successfully.";
             }
             else
             {
-                TempData["Message"] = "The book is not available for borrowing.";
+                ViewBag.ErrorMessage = "Book is not available.";
+                return RedirectToAction("Index", "Book");
             }
 
             return RedirectToAction("Index", "Book");
         }
 
         // GET: BooksBorrowedController/Edit/5
-        public ActionResult Edit(string libraryUserId, int bookId)
+        public ActionResult Prolong()
         {
-            var borrowedBook = _context.BooksBorrowed.Find(libraryUserId, bookId);
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (borrowedBook == null)
-            {
-                return NotFound();
-            }
+            var borrowedBooks = _context.BooksBorrowed
+                .Include(bb => bb.Book)
+                .Where(bb => bb.LibraryUserId == userId && !bb.IsReturned);
+                //.ToList();
 
-            // Pass the BookBorrowed object to the view for display
-            return View(borrowedBook);
+            ViewData["BookTitle"] = new SelectList(borrowedBooks, "BookId", "Book.Title");
+
+            return View(borrowedBooks.FirstOrDefault());
         }
 
         // POST: BooksBorrowedController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, BookBorrowed book)
+        public ActionResult Prolong(string libraryUserId, int? bookId)
         {
-            var borrowedBook = _context.BooksBorrowed.Find(id);
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var borrowedBook = _context.BooksBorrowed
+                                .Include(bb => bb.Book)
+                                .FirstOrDefault(bb => bb.LibraryUserId == userId && bb.BookId == bookId);
 
-            if (borrowedBook == null)
+            if (borrowedBook == null || borrowedBook.IsReturned)
             {
-                return NotFound();
+                ViewBag.ErrorMessage = "You cannot prolong returned book.";
+                return RedirectToAction("Index", "Book");
             }
 
-            borrowedBook.IsReturned = true;
-            var associatedBook = _context.Books.Find(borrowedBook.BookId);
-
-            if (associatedBook != null)
-            {
-                associatedBook.IsAvailable = true;
-                _context.Books.Update(associatedBook);
-            }
+            borrowedBook.EndTime = borrowedBook.EndTime.AddDays(30);
             _context.BooksBorrowed.Update(borrowedBook);
             _context.SaveChanges();
 
@@ -132,7 +125,16 @@ namespace Library.Controllers
         // GET: BooksBorrowedController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            var bookBorrowed = _context.BooksBorrowed
+                .Include(b => b.Book)
+                .Include(b => b.LibraryUser);
+                //.FirstOrDefault(m => m.LibraryUserId == id);
+            if (bookBorrowed == null)
+            {
+                return NotFound();
+            }
+
+            return View(bookBorrowed);
         }
 
         // POST: BooksBorrowedController/Delete/5
