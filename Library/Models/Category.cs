@@ -8,7 +8,8 @@ namespace Library.Models
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(255)]
+        [StringLength(225, ErrorMessage = "Category must be at lease 2 letters long.", MinimumLength = 2)]
+        [RegularExpression("^[^\\W\\d_]+$", ErrorMessage = "Category can contain only letters.")]
         public string Name { get; set; }
 
         public ICollection<Book> Books { get; set; }

@@ -1,11 +1,14 @@
 ﻿using Library.Data;
 using Library.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 using static System.Reflection.Metadata.BlobBuilder;
 
 namespace Library.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CategoriesController : Controller
     {
         private readonly LibraryContext _context;
@@ -25,7 +28,8 @@ namespace Library.Controllers
         // GET: CategoryController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            var category = _context.Categories.Where(c => c.Id == id).FirstOrDefault();
+            return View(category);
         }
 
         // GET: CategoryController/Create
@@ -70,7 +74,7 @@ namespace Library.Controllers
         public ActionResult Delete(int id)
         {
             Category categoryToDelete = _context.Categories.FirstOrDefault(x => x.Id == id);
-            return View();
+            return View(categoryToDelete);
         }
 
         // POST: CategoryController/Delete/5

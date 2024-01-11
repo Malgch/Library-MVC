@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Library.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class AppRolesController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -14,7 +14,6 @@ namespace Library.Controllers
             _roleManager = roleManager;
         }
 
-        //list all the roles created by users
         public IActionResult Index()
         {
             var roles = _roleManager.Roles;

@@ -99,7 +99,7 @@ namespace Library.Controllers
         public ActionResult Delete(int id)
         {
             Book bookToDelete = _context.Books.FirstOrDefault(x => x.Id == id);
-            return View();
+            return View(bookToDelete);
         }
 
         // POST: BookController/Delete/5

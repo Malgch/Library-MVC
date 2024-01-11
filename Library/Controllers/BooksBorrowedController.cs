@@ -1,9 +1,11 @@
 ﻿using Library.Data;
 using Library.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 using System.Net;
 using System.Security.Claims;
 
@@ -25,26 +27,9 @@ namespace Library.Controllers
             return View(libraryContext.ToList());
         }
 
-        // GET: BooksBorrowedController/Details/5
-        public ActionResult Details(int id)
-        {
-            if (id == null || _context.BooksBorrowed == null)
-            {
-                return NotFound();
-            }
-
-            var bookBorrowed = _context.BooksBorrowed
-                .Include(b => b.Book)
-                .Include(b => b.LibraryUser);
-                //.FirstOrDefault(m => m.LibraryUserId == id);
-            if (bookBorrowed == null)
-            {
-                return NotFound();
-            }
-            return View(bookBorrowed);
-        }
 
         // GET: BooksBorrowedController/Create
+        [Authorize(Roles = "User, Admin")]
         public ActionResult Create()
         {
             var availableBooks = _context.Books.Where(b => b.IsAvailable).ToList();
@@ -62,6 +47,7 @@ namespace Library.Controllers
         // POST: BooksBorrowedController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "User, Admin")]
         public ActionResult Create(int bookId)
         {
             var bookToBorrow = _context.Books.Where(b => b.Id == bookId).FirstOrDefault();
@@ -92,6 +78,7 @@ namespace Library.Controllers
         }
 
         // GET: BooksBorrowedController/Edit/5
+        [Authorize(Roles = "User, Admin")]
         public ActionResult Prolong()
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -109,6 +96,7 @@ namespace Library.Controllers
         // POST: BooksBorrowedController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "User, Admin")]
         public ActionResult Prolong(string libraryUserId, int? bookId)
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -130,6 +118,7 @@ namespace Library.Controllers
         }
 
         // GET: BooksBorrowedController/Edit/5
+        [Authorize(Roles = "User, Admin")]
         public ActionResult Return()
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -146,6 +135,7 @@ namespace Library.Controllers
         // POST: BooksBorrowedController/Return/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "User, Admin")]
         public ActionResult Return(string libraryUserId, int? bookId)
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -174,33 +164,46 @@ namespace Library.Controllers
 
 
         // GET: BooksBorrowedController/Delete/5
-        public ActionResult Delete(int id)
+        [Authorize(Roles = "Admin")]
+        public ActionResult Delete(int bookId)
         {
-            var bookBorrowed = _context.BooksBorrowed
-                .Include(b => b.Book)
-                .Include(b => b.LibraryUser);
-                //.FirstOrDefault(m => m.LibraryUserId == id);
-            if (bookBorrowed == null)
+            if (bookId == null)
             {
                 return NotFound();
             }
 
-            return View(bookBorrowed);
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var borrowedBook = _context.BooksBorrowed
+                                .Include(bb => bb.Book)
+                                .FirstOrDefault(bb => bb.LibraryUserId == userId && bb.BookId == bookId);
+
+            return View(borrowedBook);
         }
 
         // POST: BooksBorrowedController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        [Authorize(Roles = "Admin")]
+        public ActionResult Delete(string libraryUserId, int bookId)
         {
-            try
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var borrowedBook = _context.BooksBorrowed
+                                .Include(bb => bb.Book)
+                                .FirstOrDefault(bb => bb.LibraryUserId == userId && bb.BookId == bookId);
+
+            var book = _context.Books.Find(bookId);
+            book.IsAvailable = true;
+
+            if (borrowedBook == null)
             {
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            catch
-            {
-                return View();
-            }
+
+            _context.BooksBorrowed.Remove(borrowedBook);
+            _context.Books.Update(book);
+            _context.SaveChanges();
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }
