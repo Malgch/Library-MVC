@@ -37,10 +37,10 @@
                 @Html.DisplayFor(modelItem => item.Id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.StartTime)
+                    @item.StartTime.ToString("dd-MM-yyyy")
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EndTime)
+                    @item.EndTime.ToString("dd-MM-yyyy")
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.IsReturned)
@@ -52,7 +52,8 @@
                 @Html.DisplayFor(modelItem => item.Book.Title)
             </td>
             <td>
-                    @Html.ActionLink("Prolong", "Prolong", new { libraryUserId = item.LibraryUserId, bookId = item.BookId }, null) |
+                @Html.ActionLink("Prolong", "Prolong", new { libraryUserId = item.LibraryUserId, bookId = item.BookId }, null) |
+                @Html.ActionLink("Return", "Return", new { libraryUserId = item.LibraryUserId, bookId = item.BookId }, null) |
                 @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
                 @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
             </td>

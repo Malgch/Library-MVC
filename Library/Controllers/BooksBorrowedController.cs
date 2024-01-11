@@ -48,8 +48,15 @@ namespace Library.Controllers
         public ActionResult Create()
         {
             var availableBooks = _context.Books.Where(b => b.IsAvailable).ToList();
+
+            var defaultBookBorrowed = new BookBorrowed
+            {
+                StartTime = DateTime.Now,
+                EndTime = DateTime.Now.AddDays(30)
+            };
+
             ViewData["BookId"] = new SelectList(availableBooks, "Id", "Author");
-            return View();
+            return View(defaultBookBorrowed);
         }
 
         // POST: BooksBorrowedController/Create
@@ -57,7 +64,7 @@ namespace Library.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(int bookId)
         {
-            var bookToBorrow = _context.Books.Find(bookId);
+            var bookToBorrow = _context.Books.Where(b => b.Id == bookId).FirstOrDefault();
 
             if (bookToBorrow != null && bookToBorrow.IsAvailable)
             {
@@ -121,6 +128,50 @@ namespace Library.Controllers
 
             return RedirectToAction("Index", "BooksBorrowed");
         }
+
+        // GET: BooksBorrowedController/Edit/5
+        public ActionResult Return()
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var borrowedBooks = _context.BooksBorrowed
+                .Include(bb => bb.Book)
+                .Where(bb => bb.LibraryUserId == userId && !bb.IsReturned);
+
+            ViewData["BookTitle"] = new SelectList(borrowedBooks, "BookId", "Book.Title");
+
+            return View(borrowedBooks.FirstOrDefault());
+        }
+
+        // POST: BooksBorrowedController/Return/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Return(string libraryUserId, int? bookId)
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var borrowedBook = _context.BooksBorrowed
+                                .Include(bb => bb.Book)
+                                .FirstOrDefault(bb => bb.LibraryUserId == userId && bb.BookId == bookId);
+
+            var book = _context.Books.Find(bookId);
+
+            if (borrowedBook == null || borrowedBook.IsReturned)
+            {
+                ViewBag.ErrorMessage = "Book is alredy returned or it does not exist.";
+                return RedirectToAction("Index", "Book");
+            }
+
+            borrowedBook.IsReturned = true;
+            borrowedBook.EndTime = DateTime.Now.Date;
+            _context.BooksBorrowed.Update(borrowedBook);
+            _context.SaveChanges();
+            book.IsAvailable = true;
+            _context.Books.Update(book);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index", "BooksBorrowed");
+        }
+
 
         // GET: BooksBorrowedController/Delete/5
         public ActionResult Delete(int id)

@@ -1,0 +1,51 @@
+﻿@model Library.Models.BookBorrowed
+
+@{
+    ViewData["Title"] = "Return";
+}
+
+<h1>Return</h1>
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @ViewBag.ErrorMessage
+    </div>
+}
+<h4>BookBorrowed</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Return">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="BookId" class="control-label"></label>
+                <select asp-for="BookId" class="form-control" asp-items="ViewBag.BookTitle"></select>
+                <span asp-validation-for="BookId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StartTime" class="control-label"></label>
+                <input asp-for="StartTime" class="form-control" type="text" readonly value="@Model.StartTime.ToString("dd-MM-yyyy")" />
+            </div>
+            <div class="form-group">
+                <label asp-for="EndTime" class="control-label"></label>
+                <input asp-for="EndTime" class="form-control" type="text" value="@DateTime.Now.Date.ToString("dd-MM-yyyy")" readonly />
+            </div>
+            <input type="hidden" asp-for="LibraryUserId" />
+            <input type="hidden" asp-for="BookId" />
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
