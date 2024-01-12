@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Library.Migrations
 {
     [DbContext(typeof(LibraryContext))]
-    [Migration("20240101171031_Initial")]
+    [Migration("20240112175833_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -58,6 +58,26 @@ namespace Library.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Books");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Author = "F. Scott Fitzgerald",
+                            CategoryId = 1,
+                            Description = "Book explores themes of wealth, love, and the American Dream through the eyes of the mysterious Jay Gatsby.",
+                            IsAvailable = true,
+                            Title = "The Great Gatsby"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Author = "Dan Brown",
+                            CategoryId = 2,
+                            Description = "A gripping mystery",
+                            IsAvailable = true,
+                            Title = "The Da Vinci Code"
+                        });
                 });
 
             modelBuilder.Entity("Library.Models.BookBorrowed", b =>
@@ -97,12 +117,24 @@ namespace Library.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasMaxLength(225)
+                        .HasColumnType("nvarchar(225)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Classic"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Thriller"
+                        });
                 });
 
             modelBuilder.Entity("Library.Models.Waitlist", b =>
@@ -154,6 +186,22 @@ namespace Library.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            ConcurrencyStamp = "67d1d0b0-0ff3-4ee8-b049-d58c25f2c503",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "2",
+                            ConcurrencyStamp = "78face5e-8bee-4fe8-9420-83ba385760ee",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

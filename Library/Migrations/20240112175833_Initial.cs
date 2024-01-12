@@ -58,7 +58,7 @@ namespace Library.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(225)", maxLength: 225, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -247,6 +247,34 @@ namespace Library.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "1", "67d1d0b0-0ff3-4ee8-b049-d58c25f2c503", "Admin", "ADMIN" },
+                    { "2", "78face5e-8bee-4fe8-9420-83ba385760ee", "User", "USER" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Categories",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Classic" },
+                    { 2, "Thriller" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Books",
+                columns: new[] { "Id", "Author", "CategoryId", "Description", "IsAvailable", "Title" },
+                values: new object[] { 1, "F. Scott Fitzgerald", 1, "Book explores themes of wealth, love, and the American Dream through the eyes of the mysterious Jay Gatsby.", true, "The Great Gatsby" });
+
+            migrationBuilder.InsertData(
+                table: "Books",
+                columns: new[] { "Id", "Author", "CategoryId", "Description", "IsAvailable", "Title" },
+                values: new object[] { 2, "Dan Brown", 2, "A gripping mystery", true, "The Da Vinci Code" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

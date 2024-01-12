@@ -40,7 +40,7 @@ namespace Library.Controllers
                 EndTime = DateTime.Now.AddDays(30)
             };
 
-            ViewData["BookId"] = new SelectList(availableBooks, "Id", "Author");
+            ViewData["BookId"] = new SelectList(availableBooks, "Id", "Title");
             return View(defaultBookBorrowed);
         }
 

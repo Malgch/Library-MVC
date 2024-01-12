@@ -53,8 +53,7 @@
             </td>
             <td>
                 @Html.ActionLink("Prolong", "Prolong", new { libraryUserId = item.LibraryUserId, bookId = item.BookId }, null) |
-                @Html.ActionLink("Return", "Return", new { libraryUserId = item.LibraryUserId, bookId = item.BookId }, null) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Return", "Return", new { libraryUserId = item.LibraryUserId, bookId = item.BookId }, null) |                
                 @Html.ActionLink("Delete", "Delete", new { bookId = item.BookId }, null)
             </td>
         </tr>

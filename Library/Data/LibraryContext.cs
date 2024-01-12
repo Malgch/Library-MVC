@@ -9,16 +9,7 @@ using System.Reflection.Emit;
 
 namespace Library.Data
 {
-    //public class YourDbContextFactory : IDesignTimeDbContextFactory<LibraryContext>
-    //{
-    //    public LibraryContext CreateDbContext(string[] args)
-    //    {
-    //        var optionsBuilder = new DbContextOptionsBuilder<LibraryContext>();
-    //        optionsBuilder.UseSqlServer("Server=DESKTOP-7CRVRRO;Database=LibraryDb;Trusted_Connection=True;TrustServerCertificate=True;");
 
-    //        return new LibraryContext(optionsBuilder.Options);
-    //    }
-    //}
     public class LibraryContext : IdentityDbContext
     {
         public LibraryContext(DbContextOptions<LibraryContext> options) : base(options)
@@ -27,8 +18,10 @@ namespace Library.Data
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=DESKTOP-7CRVRRO;Database=LibraryDb;Trusted_Connection=True;TrustServerCertificate=True;");
+            optionsBuilder.UseSqlServer("Server=(localdb)\\localDb1;Database=LibraryDb;Trusted_Connection=True;TrustServerCertificate=True;");
         }
+
+
 
         private class ApplicationUserEntityConfiguration : IEntityTypeConfiguration<LibraryUser>
         {
@@ -71,6 +64,10 @@ namespace Library.Data
                 .WithMany(b => b.Waitlist)
                 .HasForeignKey(w => w.BookId)
                 .IsRequired();
+
+            modelBuilder.ApplyConfiguration(new ApplicationUserEntityConfiguration());
+
+            Seed(modelBuilder);
         }
 
         public DbSet<Book> Books { get; set; }
@@ -79,6 +76,59 @@ namespace Library.Data
         public DbSet<Waitlist> Waitlists { get; set; }
         public DbSet<LibraryUser> LibraryUsers { get; set; }
 
+        private void Seed(ModelBuilder modelBuilder)
+        {
+  
+            modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole
+             {
+              Id = "1",
+              Name = "Admin",
+              NormalizedName = "ADMIN"
+              });               
 
+            modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole
+            {
+               Id = "2",
+               Name = "User",
+               NormalizedName = "USER"
+             });
+                            
+
+
+            //////////////////////////////////////////////
+
+            modelBuilder.Entity<Category>().HasData(new Category
+            {
+                Id = 1,
+                Name = "Classic"
+            });
+
+            modelBuilder.Entity<Category>().HasData(new Category
+            {
+                Id = 2,
+                Name = "Thriller"
+            });
+
+            modelBuilder.Entity<Book>().HasData(new Book
+            {
+                Id = 1,
+                Title = "The Great Gatsby",
+                Author = "F. Scott Fitzgerald",
+                Description = "Book explores themes of wealth, love, and the American Dream through the eyes of the mysterious Jay Gatsby.",
+                IsAvailable = true,
+                CategoryId = 1,
+            });
+
+            modelBuilder.Entity<Book>().HasData(new Book
+            {
+                Id = 2,
+                Title = "The Da Vinci Code",
+                Author = "Dan Brown",
+                Description = "A gripping mystery",
+                IsAvailable = true,
+                CategoryId = 2,
+            });
+
+        }
     }
 }
